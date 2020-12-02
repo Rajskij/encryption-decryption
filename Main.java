@@ -1,22 +1,33 @@
 package encryptdecrypt;
 
-import java.util.Scanner;
-
 public class Main {
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        String[] inputTxt = sc.nextLine().split("");
-        int key = sc.nextInt();
-        System.out.println(encryption(inputTxt,key));
-    }
-    public static String encryption(String[] input, int key) {
-        StringBuilder encrypt = new StringBuilder(new String());
-        String alphabet = "abcdefghijklmnopqrstuvwxyz";
-        for (int i = 0; i < input.length; i++) {
-            int index = (alphabet.indexOf(input[i]) + key) % alphabet.length();
+        String mode = "";
+        String data = "";
+        int key = 0;
 
-            encrypt.append((input[i].matches("[\\w]")) ?
-                    alphabet.charAt(index) : input[i]);
+        for (int i = 0; i < args.length - 1; i++) {
+            if (args[i].contains("-mode")) {
+                mode = args[i + 1];
+            } else if (args[i].contains("-key")) {
+                try {
+                    key = Integer.parseInt(args[i + 1]);
+                } catch (NumberFormatException e) {
+                    key = 0;
+                }
+            } else if (args[i].contains("-data")) {
+                data = args[i + 1].contains("-") ? " " : args[i + 1];
+            }
+        }
+        String[] dataArr = data.split("");
+        System.out.println(encryption(mode, key, dataArr));
+    }
+    public static String encryption(String mode, int key, String[] data) {
+
+        StringBuilder encrypt = new StringBuilder(new String());
+        for (int i = 0; i < data.length; i++) {
+            int index = mode.equals("dec") ? data[i].charAt(0) - key : data[i].charAt(0) + key;
+            encrypt.append((char) index);
         }
         return encrypt.toString();
     }
